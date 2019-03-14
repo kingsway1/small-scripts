@@ -1,0 +1,60 @@
+#!/bin/bash
+# Script for automating backups - useful if you have reguarly backup files from one directory to another
+
+if [ -z "$1" ]
+then 
+	echo " "
+	echo "[*] Compress files"
+	echo "[*] Use -h for help menu"
+	echo " "
+	exit 0
+fi	
+
+
+while getopts ":hc:d:l:" opt; do
+  case ${opt} in
+    h )
+      echo " "
+      echo "Usage: fbackup -c example/ "
+      echo " "
+      echo " -h 	Display this help message "
+      echo " -c 	Compress a file "
+      echo " -d	Decompress a file "
+      echo " -l 	List files in archive "
+      echo " "
+      exit 0
+      ;;
+    c )
+      File=${OPTARG%/}
+      #make sure to change the location of directories
+      tar cfj $HOME/changeme/archives/$File-`date +%d-%m-%Y`.tar.bz2 $File
+      if [[ -f $File ]]; then
+	  rm $File
+      elif [[ -d $File ]]; then
+	  rm -rf $File
+      fi 
+      echo "$File compressed in $HOME/changeme/archives" 
+      ;;
+    d )
+      dfile=$OPTARG
+      tar -xf $dfile -C $HOME/changeme/
+      rm $dfile
+      echo "$dfile de-compressed in $HOME/changeme"
+      ;;
+    l )
+      lfile=$OPTARG
+      tar -tvf $lfile
+      ;;
+    \? )
+      echo "Invalid Option: -$OPTARG" 1>&2
+      exit 1
+      ;;
+    : )
+      echo "Invalid Option: -$OPTARG requires an argument" 1>&2
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+

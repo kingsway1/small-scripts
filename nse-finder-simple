@@ -1,0 +1,12 @@
+#!/bin/bash
+# Small script to quickly find nmap scripts
+
+if [ -z "$1" ]; then
+	echo " "
+	echo "[*] NSE finder"
+	echo "[*] Usage : nse-finder <smb> "
+	echo " "
+	exit 0
+fi
+
+locate -r '\.nse$' | grep $1
